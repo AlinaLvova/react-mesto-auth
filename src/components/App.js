@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -9,8 +10,12 @@ import { CurrentUserContext } from "./../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import ProtectedRouteElement from "./ProtectedRoute";
+import Login from "./Login";
+import Register from "./Register";
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
   const [isUpdateAvatarPopupOpen, setIsUpdateAvatarPopupOpen] = useState(false);
@@ -102,14 +107,15 @@ function App() {
   };
 
   const handleUpdateUser = ({ name, about }) => {
-    api.updateUserInfo(name, about)
-    .then((user) => {
-      setCurrentUser(user);
-      closeAllPopups();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    api
+      .updateUserInfo(name, about)
+      .then((user) => {
+        setCurrentUser(user);
+        closeAllPopups();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleUpdateAvatar = ({ avatar }) => {
@@ -142,15 +148,37 @@ function App() {
       <div className="page">
         <div className="page__container">
           <Header />
-          <Main
-            onEditProfile={handleEditProfileClick}
-            onUpdateAvatar={handleUpdateAvatarClick}
-            onAddCard={handleAddCardClick}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-            cards={cards}
-          />
+          <main className="content">
+            <Routes>
+              {/* <Route
+                path="/"
+                element={
+                  loggedIn ? (
+                    <Navigate to="/mesto" replace />
+                  ) : (
+                    <Navigate to="/sign-in" replace />
+                  )
+                }
+              ></Route> */}
+              <Route path="/sign-up" element={<Login />}></Route>
+              <Route path="/sign-in" element={<Register />}></Route>
+              <Route 
+                path="/mesto" 
+                element={
+                <ProtectedRouteElement 
+                  element={Main}
+                  loggedIn={loggedIn}
+                  onEditProfile={handleEditProfileClick}
+                  onUpdateAvatar={handleUpdateAvatarClick}
+                  onAddCard={handleAddCardClick}
+                  onCardClick={handleCardClick}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                  cards={cards}
+                />}
+              />
+            </Routes>
+          </main>
           <Footer />
           {/* popup: edit profile */}
           <EditProfilePopup

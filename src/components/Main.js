@@ -6,7 +6,7 @@ function Main(props) {
   const currentUser = useContext(CurrentUserContext);
 
   return (
-    <main className="content">
+    <div>
       <section className="profile">
         <div className="profile__info-group">
           <div className="profile__avatar-container">
@@ -61,7 +61,7 @@ function Main(props) {
           ))}
         </ul>
       </section>
-    </main>
+    </div>
   );
 }
 
