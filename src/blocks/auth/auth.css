@@ -6,9 +6,15 @@
     height: 461px;
 }
 
-@media screen and (max-width:500px) {
+@media screen and (max-width:880px) {
     .auth {
         max-width: 260px;
-        height: 404px;
+        max-height: 380px;
+    }
+}
+
+@media screen and (max-width:500px) {
+    .auth {
+        max-height: 360px;
     }
 }

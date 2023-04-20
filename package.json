@@ -1,5 +1,5 @@
 {
-  "name": "mesto-react",
+  "name": "mesto",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -42,5 +42,5 @@
     "gh-pages": "^5.0.0",
     "install": "^0.13.0"
   },
-  "homepage": "https://alinalvova.github.io/mesto-react/"
+  "homepage": "https://alinalvova.github.io/mesto/"
 }

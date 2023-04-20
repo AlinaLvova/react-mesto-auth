@@ -6,8 +6,18 @@
 
 @import url(./blocks/header/header.css);
 @import url(./blocks/header/__logo/header__logo.css);
+@import url(./blocks/header/__auth/header__auth.css);
+@import url(./blocks/header/__auth-container/header__auth-container.css);
+@import url(./blocks/header/__email/header__email.css);
+@import url(./blocks/header/__menu-btn/_clicked/header__menu-btn_clicked.css);
+@import url(./blocks/header/__menu-btn/header__menu-btn.css);
+@import url(./blocks/header/__mobile-menu/header__mobile-menu.css);
+
 @import url(./blocks/content/content.css);
 @import url(./blocks/link/link.css);
+
+@import url(./blocks/colors/grey.css);
+@import url(./blocks/colors/white.css);
 
 @import url(./blocks/profile/profile.css);
 @import url(./blocks/profile/__add-button/profile__add-button.css);

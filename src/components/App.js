@@ -15,7 +15,7 @@ import Login from "./Login";
 import Register from "./Register";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
   const [isUpdateAvatarPopupOpen, setIsUpdateAvatarPopupOpen] = useState(false);
@@ -150,8 +150,8 @@ function App() {
           <Header />
           <main className="content">
             <Routes>
-              {/* <Route
-                path="/"
+              <Route
+                exact path="/"
                 element={
                   loggedIn ? (
                     <Navigate to="/mesto" replace />
@@ -159,7 +159,7 @@ function App() {
                     <Navigate to="/sign-in" replace />
                   )
                 }
-              ></Route> */}
+              ></Route>
               <Route path="/sign-up" element={<Login />}></Route>
               <Route path="/sign-in" element={<Register />}></Route>
               <Route 
