@@ -18,6 +18,7 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(true);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
+  const [isIsInfoTooltipOpen, setIsInfoTooltipOpen] = useState(true);
   const [isUpdateAvatarPopupOpen, setIsUpdateAvatarPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
@@ -69,6 +70,7 @@ function App() {
     setIsUpdateAvatarPopupOpen(false);
     setIsAddCardPopupOpen(false);
     setIsEditProfilePopupOpen(false);
+    setIsInfoTooltipOpen(false);
     setSelectedCard({});
   };
 
@@ -151,7 +153,7 @@ function App() {
           <main className="content">
             <Routes>
               <Route
-                exact path="/"
+                path="/"
                 element={
                   loggedIn ? (
                     <Navigate to="/mesto" replace />
@@ -160,8 +162,8 @@ function App() {
                   )
                 }
               ></Route>
-              <Route path="/sign-up" element={<Login />}></Route>
-              <Route path="/sign-in" element={<Register />}></Route>
+              <Route exact path="/sign-up" element={<Login />}></Route>
+              <Route exact path="/sign-in" element={<Register />}></Route>
               <Route 
                 path="/mesto" 
                 element={
@@ -175,6 +177,8 @@ function App() {
                   onCardLike={handleCardLike}
                   onCardDelete={handleCardDelete}
                   cards={cards}
+                  onClosePopup={closeAllPopups}
+                  isOpenInfoPopup={isIsInfoTooltipOpen}
                 />}
               />
             </Routes>

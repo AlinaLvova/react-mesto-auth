@@ -1,6 +1,7 @@
 import {useContext} from 'react';
 import Card from './Card';
 import { CurrentUserContext } from './../contexts/CurrentUserContext';
+import InfoTooltip from "./InfoTooltip";
 
 function Main(props) {
   const currentUser = useContext(CurrentUserContext);
@@ -55,12 +56,12 @@ function Main(props) {
               _id={card._id}
               onCardClick={props.onCardClick}
               onCardLike={props.onCardLike}
-              onCardDelete={props.onCardDelete}
-              
+              onCardDelete={props.onCardDelete}  
             />
           ))}
         </ul>
       </section>
+      <InfoTooltip isOpen={props.isOpenInfoPopup} onClosePopup={props.onClosePopup} ></InfoTooltip>
     </div>
   );
 }
