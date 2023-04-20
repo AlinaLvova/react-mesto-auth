@@ -18,7 +18,7 @@ function AuthenticationForm(props) {
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
-    } 
+    }
   }, [formValue.email, formValue.password]);
 
   const navigate = useNavigate();
@@ -48,18 +48,22 @@ function AuthenticationForm(props) {
     e.preventDefault();
     if (props.isLogin) {
       auth.register(formValue.password, formValue.email).then((res) => {
-      if (res === 400 || res === 401) {
-        setIsInfoTooltipOpen(true);
-      } else {
-        props.handleLogin();
-        navigate("/mesto", { replace: true, state: { isOpenInfoPopup : true } });
-      }
-    });
-  }
-    setFormValue({
-      email: "",
-      password: "",
-    });
+        if (res === 400 || res === 401) {
+          setIsInfoTooltipOpen(true);
+        } else {
+          props.handleLogin();
+          navigate("/mesto", {
+            replace: true,
+            state: { isOpenInfoPopup: true },
+          });
+
+          setFormValue({
+            email: "",
+            password: "",
+          });
+        }
+      });
+    }
   };
 
   return (
