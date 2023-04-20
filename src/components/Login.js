@@ -1,8 +1,8 @@
 import AuthenticationForm from "./AuthenticationForm";
 
-export default function Login() {
+export default function Login(props) {
     return (
-        <AuthenticationForm isLogin={true}>
+        <AuthenticationForm isLogin={true} handleLogin={props.handleLogin}>
         </AuthenticationForm>
     );
 }

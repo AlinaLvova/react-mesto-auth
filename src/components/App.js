@@ -15,10 +15,9 @@ import Login from "./Login";
 import Register from "./Register";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
-  const [isIsInfoTooltipOpen, setIsInfoTooltipOpen] = useState(true);
   const [isUpdateAvatarPopupOpen, setIsUpdateAvatarPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
@@ -70,7 +69,6 @@ function App() {
     setIsUpdateAvatarPopupOpen(false);
     setIsAddCardPopupOpen(false);
     setIsEditProfilePopupOpen(false);
-    setIsInfoTooltipOpen(false);
     setSelectedCard({});
   };
 
@@ -145,6 +143,10 @@ function App() {
       });
   };
 
+  const handleLogin = () => {
+    setLoggedIn(true);
+  }; 
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
@@ -158,11 +160,11 @@ function App() {
                   loggedIn ? (
                     <Navigate to="/mesto" replace />
                   ) : (
-                    <Navigate to="/sign-in" replace />
+                    <Navigate to="/sign-up" replace />
                   )
                 }
               ></Route>
-              <Route exact path="/sign-up" element={<Login />}></Route>
+              <Route exact path="/sign-up" element={<Login handleLogin={handleLogin}/>}></Route>
               <Route exact path="/sign-in" element={<Register />}></Route>
               <Route 
                 path="/mesto" 
@@ -177,8 +179,6 @@ function App() {
                   onCardLike={handleCardLike}
                   onCardDelete={handleCardDelete}
                   cards={cards}
-                  onClosePopup={closeAllPopups}
-                  isOpenInfoPopup={isIsInfoTooltipOpen}
                 />}
               />
             </Routes>

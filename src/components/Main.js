@@ -1,11 +1,19 @@
 import {useContext} from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import Card from './Card';
 import { CurrentUserContext } from './../contexts/CurrentUserContext';
 import InfoTooltip from "./InfoTooltip";
 
 function Main(props) {
   const currentUser = useContext(CurrentUserContext);
+  const location = useLocation();
 
+  const navigate = useNavigate();
+
+  function handleClosePopup(){
+    navigate("/mesto", { replace: true, state: { isOpenInfoPopup : false } });  
+  }
+  
   return (
     <div>
       <section className="profile">
@@ -61,7 +69,7 @@ function Main(props) {
           ))}
         </ul>
       </section>
-      <InfoTooltip isOpen={props.isOpenInfoPopup} onClosePopup={props.onClosePopup} ></InfoTooltip>
+      <InfoTooltip status={true} isOpen={location.state.isOpenInfoPopup} onClosePopup={handleClosePopup} ></InfoTooltip>
     </div>
   );
 }
