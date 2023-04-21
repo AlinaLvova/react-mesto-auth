@@ -31,12 +31,12 @@ export class Auth{
     return response;
   }
 
-  async checkUserSession(jwt) {
+  async checkUserSession(token) {
     const response = await fetch(`${BASE_URL}/users/me`, {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
-        "Authorization" : `Bearer ${jwt}`
+        "Authorization" : `Bearer ${token}`
       }
     });
 

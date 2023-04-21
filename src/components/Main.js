@@ -64,12 +64,17 @@ function Main(props) {
               _id={card._id}
               onCardClick={props.onCardClick}
               onCardLike={props.onCardLike}
-              onCardDelete={props.onCardDelete}  
+              onCardDelete={props.onCardDelete}
             />
           ))}
         </ul>
       </section>
-      <InfoTooltip status={true} isOpen={location.state?.isOpenInfoPopup || false} onClosePopup={handleClosePopup} ></InfoTooltip>
+      <InfoTooltip
+        isSuccessfull={true}
+        isOpen={location.state?.isOpenInfoPopup || false}
+        onClosePopup={handleClosePopup}
+        successTitle={location.state?.title || ""}
+      ></InfoTooltip>
     </div>
   );
 }

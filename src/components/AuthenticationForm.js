@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import auth from "./../utils/Auth";
 import InfoTooltip from "./InfoTooltip";
-import { func } from "prop-types";
 
 function AuthenticationForm(props) {
   const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -59,6 +58,7 @@ function AuthenticationForm(props) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    const title = props.isLogin ? 'Вы успешно вошли в систему!' : 'Вы успешно зарегистрировались!';
     try {
       const response = props.isLogin
         ? await auth.signin( formValue.email, formValue.password)
@@ -73,19 +73,17 @@ function AuthenticationForm(props) {
   
       const data = await response.json();
 
-      console.log('data=', data);
-
       if (props.isLogin) {
-        localStorage.setItem('jwt', data.jwt);
+        localStorage.setItem('token', data.token);
       }
-      const email = data.data['email'];
-      console.log('de=', email);
 
-      props.handleLogin(email);
+      props.handleLogin(formValue.email);
+
+      setFormValue({email: '', password: ''});
 
       navigate("/mesto", {
         replace: true,
-        state: { isOpenInfoPopup: true },
+        state: { isOpenInfoPopup: true , title: title},
       });
     } catch (error) {
       console.log('Error:', error);
@@ -139,10 +137,10 @@ function AuthenticationForm(props) {
         )}
       </div>
       <InfoTooltip
-        status={false}
+        isSuccessfull={false}
         isOpen={isInfoTooltipOpen}
         onClosePopup={handleClosePopup}
-        title={errorInfoTooltipTitle}
+        failedTitle={errorInfoTooltipTitle}
       ></InfoTooltip>
     </>
   );

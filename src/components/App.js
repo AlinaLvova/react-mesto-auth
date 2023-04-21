@@ -13,6 +13,7 @@ import AddPlacePopup from "./AddPlacePopup";
 import ProtectedRouteElement from "./ProtectedRoute";
 import Login from "./Login";
 import Register from "./Register";
+import auth from "./.././utils/Auth";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -23,8 +24,10 @@ function App() {
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    handleTokenCheck();
     api
       .getCardList()
       .then((cardListData) => {
@@ -41,9 +44,7 @@ function App() {
       .catch((error) => {
         console.log(error.message);
       });
-  }, []);
 
-  useEffect(() => {
     api
       .getUserInfo()
       .then((infoData) => {
@@ -52,7 +53,31 @@ function App() {
       .catch((error) => {
         console.log(error.message);
       });
+    
   }, []);
+
+  async function handleTokenCheck() {
+    const token = localStorage.getItem('token');
+
+    if (!token)
+      navigate("/sign-in", {replace: true});
+    else{
+      try{
+        const response = await auth.checkUserSession(token);
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message);
+        }
+        const data = await response.json();
+          setLoggedIn(true);
+          setUserData({email: data.data.email});
+          navigate("/mesto", {replace: true})
+      }
+      catch(error) {
+        throw new Error(error.message);
+      }
+    }
+  }
 
   const handleUpdateAvatarClick = () => {
     setIsUpdateAvatarPopupOpen(true);
@@ -149,11 +174,17 @@ function App() {
     setUserData({email: email});
   }; 
 
+  const handleLogOut = () => {
+    setLoggedIn(false);
+    localStorage.clear('token');
+    navigate("/sign-in", {replace: true});
+  }; 
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-          <Header userData={userData}/>
+          <Header userData={userData} onLogOut={handleLogOut}/>
           <main className="content">
             <Routes>
               <Route
@@ -162,12 +193,12 @@ function App() {
                   loggedIn ? (
                     <Navigate to="/mesto" replace />
                   ) : (
-                    <Navigate to="/sign-up" replace />
+                    <Navigate to="/sign-in" replace />
                   )
                 }
               ></Route>
-              <Route exact path="/sign-in" element={<Login handleLogin={handleLogin}/>}></Route>
-              <Route exact path="/sign-up" element={<Register handleLogin={handleLogin}/>}></Route>
+              <Route exact path="/sign-in" element={<Login onLogin={handleLogin}/>}></Route>
+              <Route exact path="/sign-up" element={<Register onRegister={handleLogin}/>}></Route>
               <Route 
                 path="/mesto" 
                 element={

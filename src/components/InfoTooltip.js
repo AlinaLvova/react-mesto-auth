@@ -22,8 +22,8 @@ function InfoTooltip(props) {
           onClick={handleClosePopup}
         ></button>
         <div className="popup__form">
-          <img className="popup__info-icon" src={props.status ? successIcon : failedIcon}/>
-          <div className="popup__info-title">{props.status ? successTitle : props.title.length ? props.title : failedTitle}</div>
+          <img className="popup__info-icon" src={props.isSuccessfull ? successIcon : failedIcon}/>
+          <div className="popup__info-title">{props.isSuccessfull ?  props.successTitle ?? successTitle :  props.failedTitle ?? failedTitle}</div>
         </div>
       </div>
     </div>

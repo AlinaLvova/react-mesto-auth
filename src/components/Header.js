@@ -6,7 +6,7 @@ function Header(props) {
   const [width, setWidth] = useState(window.innerWidth);
   const [isClicked, setIsClicked] = useState(false);
   const maxSize = 400;
-
+  
   const Menu = (
     <menu className="header__auth-container">
       <div className="header__auth header__email">
@@ -32,6 +32,7 @@ function Header(props) {
 
 }
   function handleLogOut() {
+    props.onLogOut();
     setIsClicked(false);
   }
 
