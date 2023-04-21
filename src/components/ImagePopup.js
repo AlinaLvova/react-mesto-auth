@@ -11,6 +11,7 @@ function ImagePopup({card, onClose}) {
   const handleClosePopup = () => {
     onClose();
   };
+  
   return (
     <div
       className={`popup popup_opacity-img ${

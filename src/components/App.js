@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -9,16 +10,24 @@ import { CurrentUserContext } from "./../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import ProtectedRouteElement from "./ProtectedRoute";
+import Login from "./Login";
+import Register from "./Register";
+import auth from "./.././utils/Auth";
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userData, setUserData] = useState({email: ""});
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
   const [isUpdateAvatarPopupOpen, setIsUpdateAvatarPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    handleTokenCheck();
     api
       .getCardList()
       .then((cardListData) => {
@@ -35,9 +44,7 @@ function App() {
       .catch((error) => {
         console.log(error.message);
       });
-  }, []);
 
-  useEffect(() => {
     api
       .getUserInfo()
       .then((infoData) => {
@@ -46,7 +53,31 @@ function App() {
       .catch((error) => {
         console.log(error.message);
       });
+    
   }, []);
+
+  async function handleTokenCheck() {
+    const token = localStorage.getItem('token');
+
+    if (!token)
+      navigate("/sign-in", {replace: true});
+    else{
+      try{
+        const response = await auth.checkUserSession(token);
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message);
+        }
+        const data = await response.json();
+          setLoggedIn(true);
+          setUserData({email: data.data.email});
+          navigate("/mesto", {replace: true})
+      }
+      catch(error) {
+        throw new Error(error.message);
+      }
+    }
+  }
 
   const handleUpdateAvatarClick = () => {
     setIsUpdateAvatarPopupOpen(true);
@@ -102,14 +133,15 @@ function App() {
   };
 
   const handleUpdateUser = ({ name, about }) => {
-    api.updateUserInfo(name, about)
-    .then((user) => {
-      setCurrentUser(user);
-      closeAllPopups();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    api
+      .updateUserInfo(name, about)
+      .then((user) => {
+        setCurrentUser(user);
+        closeAllPopups();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleUpdateAvatar = ({ avatar }) => {
@@ -137,20 +169,53 @@ function App() {
       });
   };
 
+  function handleLogin(email){
+    setLoggedIn(true);
+    setUserData({email: email});
+  }; 
+
+  const handleLogOut = () => {
+    setLoggedIn(false);
+    localStorage.clear('token');
+    navigate("/sign-in", {replace: true});
+  }; 
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-          <Header />
-          <Main
-            onEditProfile={handleEditProfileClick}
-            onUpdateAvatar={handleUpdateAvatarClick}
-            onAddCard={handleAddCardClick}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-            cards={cards}
-          />
+          <Header userData={userData} onLogOut={handleLogOut}/>
+          <main className="content">
+            <Routes>
+              <Route
+                path="*"
+                element={
+                  loggedIn ? (
+                    <Navigate to="/mesto" replace />
+                  ) : (
+                    <Navigate to="/sign-in" replace />
+                  )
+                }
+              ></Route>
+              <Route exact path="/sign-in" element={<Login onLogin={handleLogin}/>}></Route>
+              <Route exact path="/sign-up" element={<Register onRegister={handleLogin}/>}></Route>
+              <Route 
+                path="/mesto" 
+                element={
+                <ProtectedRouteElement 
+                  element={Main}
+                  loggedIn={loggedIn}
+                  onEditProfile={handleEditProfileClick}
+                  onUpdateAvatar={handleUpdateAvatarClick}
+                  onAddCard={handleAddCardClick}
+                  onCardClick={handleCardClick}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                  cards={cards}
+                />}
+              />
+            </Routes>
+          </main>
           <Footer />
           {/* popup: edit profile */}
           <EditProfilePopup

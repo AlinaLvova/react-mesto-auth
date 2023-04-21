@@ -1,12 +1,21 @@
 import {useContext} from 'react';
+import { useLocation, useNavigate } from "react-router-dom";
 import Card from './Card';
 import { CurrentUserContext } from './../contexts/CurrentUserContext';
+import InfoTooltip from "./InfoTooltip";
 
 function Main(props) {
   const currentUser = useContext(CurrentUserContext);
+  const location = useLocation();
 
+  const navigate = useNavigate();
+
+  function handleClosePopup(){
+    navigate("/mesto", { replace: true, state: { isOpenInfoPopup : false } });  
+  }
+  
   return (
-    <main className="content">
+    <div>
       <section className="profile">
         <div className="profile__info-group">
           <div className="profile__avatar-container">
@@ -56,12 +65,17 @@ function Main(props) {
               onCardClick={props.onCardClick}
               onCardLike={props.onCardLike}
               onCardDelete={props.onCardDelete}
-              
             />
           ))}
         </ul>
       </section>
-    </main>
+      <InfoTooltip
+        isSuccessfull={true}
+        isOpen={location.state?.isOpenInfoPopup || false}
+        onClosePopup={handleClosePopup}
+        successTitle={location.state?.title || ""}
+      ></InfoTooltip>
+    </div>
   );
 }
 
