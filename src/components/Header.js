@@ -10,7 +10,7 @@ function Header(props) {
   const Menu = (
     <menu className="header__auth-container">
       <div className="header__auth header__email">
-        {props.email}mesto@mail.com
+        {props.userData.email}
       </div>
       <Link to="/sign-in" className="header__auth grey" onClick={handleLogOut}>
         Выйти

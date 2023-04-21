@@ -16,6 +16,7 @@ import Register from "./Register";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [userData, setUserData] = useState({email: ""});
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
   const [isUpdateAvatarPopupOpen, setIsUpdateAvatarPopupOpen] = useState(false);
@@ -143,19 +144,20 @@ function App() {
       });
   };
 
-  const handleLogin = () => {
+  function handleLogin(email){
     setLoggedIn(true);
+    setUserData({email: email});
   }; 
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-          <Header />
+          <Header userData={userData}/>
           <main className="content">
             <Routes>
               <Route
-                path="/"
+                path="*"
                 element={
                   loggedIn ? (
                     <Navigate to="/mesto" replace />
@@ -164,8 +166,8 @@ function App() {
                   )
                 }
               ></Route>
-              <Route exact path="/sign-up" element={<Login handleLogin={handleLogin}/>}></Route>
-              <Route exact path="/sign-in" element={<Register />}></Route>
+              <Route exact path="/sign-in" element={<Login handleLogin={handleLogin}/>}></Route>
+              <Route exact path="/sign-up" element={<Register handleLogin={handleLogin}/>}></Route>
               <Route 
                 path="/mesto" 
                 element={

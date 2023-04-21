@@ -69,7 +69,7 @@ function Main(props) {
           ))}
         </ul>
       </section>
-      <InfoTooltip status={true} isOpen={location.state.isOpenInfoPopup} onClosePopup={handleClosePopup} ></InfoTooltip>
+      <InfoTooltip status={true} isOpen={location.state?.isOpenInfoPopup || false} onClosePopup={handleClosePopup} ></InfoTooltip>
     </div>
   );
 }
