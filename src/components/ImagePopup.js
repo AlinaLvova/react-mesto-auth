@@ -5,7 +5,7 @@ import usePopupClose from "./../hooks/usePopupClose";
 function ImagePopup({card, onClose}) {
   const [imageError, setImageError] = useState(false);
 
-  usePopupClose(true, onClose);
+  usePopupClose(card.link, onClose);
 
   const handleImageError = () => {
     setImageError(true);

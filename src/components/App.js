@@ -53,10 +53,15 @@ function App() {
 
     if (!token) navigate("/sign-in", { replace: true });
     else {
+      try{
       const data = await auth.checkUserSession(token);
       setLoggedIn(true);
       setUserData({ email: data.data.email });
       navigate("/mesto", { replace: true });
+      }
+      catch(error){
+        console.log('Error:', error);
+      }
     }
   }
 

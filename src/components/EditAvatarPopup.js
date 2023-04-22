@@ -31,7 +31,7 @@ function EditAvatarPopup(props) {
             isLoading={props.isLoading}
           >
             <input
-              id="input-link"
+              id="input-link-avatar"
               name="input-link-on-img"
               type="url"
               className="popup__input-field"

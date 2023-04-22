@@ -48,7 +48,7 @@ function AddPlacePopup(props) {
       />
       <span className="input-title-error popup__input-field-error"></span>
       <input
-        id="input-link"
+        id="input-link-card"
         name="link"
         type="url"
         className="popup__input-field"

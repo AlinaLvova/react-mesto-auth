@@ -91,6 +91,7 @@ function AuthenticationForm(props) {
               required
               value={formValue.email}
               onChange={handleChange}
+              autoComplete="current-password"
             />
             <span className="auth__error"></span>
             <input
@@ -102,6 +103,7 @@ function AuthenticationForm(props) {
               required
               value={formValue.password}
               onChange={handleChange}
+              autoComplete="current-password"
             />
           </div>
           <button
