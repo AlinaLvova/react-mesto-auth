@@ -1,8 +1,11 @@
 import {useState} from 'react';
 import image_404 from './../images/404.webp';
+import usePopupClose from "./../hooks/usePopupClose";
 
 function ImagePopup({card, onClose}) {
   const [imageError, setImageError] = useState(false);
+
+  usePopupClose(true, onClose);
 
   const handleImageError = () => {
     setImageError(true);

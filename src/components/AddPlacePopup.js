@@ -4,7 +4,6 @@ import { useState } from "react";
 function AddPlacePopup(props) {
   const [cardName, setCardName] = useState("");
   const [cardLink, setCardLink] = useState("");
-  const [buttonTitle, setButtonTitle] = useState("Создать");
 
   const handleChangeCardName = (e) => {
     setCardName(e.target.value);
@@ -16,7 +15,6 @@ function AddPlacePopup(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setButtonTitle("Сохранение...");
     props.onAddPlace({
         name: cardName,
         link: cardLink,
@@ -24,7 +22,6 @@ function AddPlacePopup(props) {
       .then(() => {
         setCardName("");
         setCardLink("");
-        setButtonTitle("Создать");
       });
   };
 
@@ -32,7 +29,7 @@ function AddPlacePopup(props) {
     <PopupWithForm
       name="add-card"
       title="Новое место"
-      buttonTitle={buttonTitle}
+      isLoading={props.isLoading}
       isOpen={props.isOpen}
       onClose={props.onClose}
       onSubmit={handleSubmit}

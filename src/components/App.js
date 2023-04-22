@@ -17,13 +17,14 @@ import auth from "./.././utils/Auth";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [userData, setUserData] = useState({email: ""});
+  const [userData, setUserData] = useState({ email: "" });
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
   const [isUpdateAvatarPopupOpen, setIsUpdateAvatarPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,15 +32,7 @@ function App() {
     api
       .getCardList()
       .then((cardListData) => {
-        setCards(
-          cardListData.map((card) => ({
-            _id: card._id,
-            name: card.name,
-            link: card.link,
-            likes: card.likes,
-            owner: card.owner,
-          }))
-        );
+        setCards(cardListData);
       })
       .catch((error) => {
         console.log(error.message);
@@ -53,29 +46,17 @@ function App() {
       .catch((error) => {
         console.log(error.message);
       });
-    
   }, []);
 
   async function handleTokenCheck() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
-    if (!token)
-      navigate("/sign-in", {replace: true});
-    else{
-      try{
-        const response = await auth.checkUserSession(token);
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message);
-        }
-        const data = await response.json();
-          setLoggedIn(true);
-          setUserData({email: data.data.email});
-          navigate("/mesto", {replace: true})
-      }
-      catch(error) {
-        throw new Error(error.message);
-      }
+    if (!token) navigate("/sign-in", { replace: true });
+    else {
+      const data = await auth.checkUserSession(token);
+      setLoggedIn(true);
+      setUserData({ email: data.data.email });
+      navigate("/mesto", { replace: true });
     }
   }
 
@@ -96,7 +77,30 @@ function App() {
     setIsAddCardPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setSelectedCard({});
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   };
+
+  const isOpen =
+    isUpdateAvatarPopupOpen ||
+    isEditProfilePopupOpen ||
+    isAddCardPopupOpen ||
+    selectedCard.link;
+
+  // useEffect(() => {
+  //   function closeByEscape(evt) {
+  //     if (evt.key === "Escape") {
+  //       closeAllPopups();
+  //     }
+  //   }
+  //   if (isOpen) {
+  //     document.addEventListener("keydown", closeByEscape);
+  //     return () => {
+  //       document.removeEventListener("keydown", closeByEscape);
+  //     };
+  //   }
+  // }, [isOpen]);
 
   const handleCardClick = (card) => {
     setSelectedCard(card);
@@ -133,6 +137,7 @@ function App() {
   };
 
   const handleUpdateUser = ({ name, about }) => {
+    setIsLoading(true);
     api
       .updateUserInfo(name, about)
       .then((user) => {
@@ -145,11 +150,11 @@ function App() {
   };
 
   const handleUpdateAvatar = ({ avatar }) => {
+    setIsLoading(true);
     api
       .updateAvatar(avatar)
-      .then(() => {
-        currentUser.avatar = avatar;
-        setCurrentUser(currentUser);
+      .then((userData) => {
+        setCurrentUser(userData);
         closeAllPopups();
       })
       .catch((error) => {
@@ -158,6 +163,7 @@ function App() {
   };
 
   const handleAddPlaceSubmit = ({ name, link }) => {
+    setIsLoading(true);
     return api
       .sentCard({ name, link })
       .then((newCard) => {
@@ -169,22 +175,22 @@ function App() {
       });
   };
 
-  function handleLogin(email){
+  function handleLogin(email) {
     setLoggedIn(true);
-    setUserData({email: email});
-  }; 
+    setUserData({ email: email });
+  }
 
   const handleLogOut = () => {
     setLoggedIn(false);
-    localStorage.clear('token');
-    navigate("/sign-in", {replace: true});
-  }; 
+    localStorage.clear("token");
+    navigate("/sign-in", { replace: true });
+  };
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-          <Header userData={userData} onLogOut={handleLogOut}/>
+          <Header userData={userData} onLogOut={handleLogOut} />
           <main className="content">
             <Routes>
               <Route
@@ -197,22 +203,31 @@ function App() {
                   )
                 }
               ></Route>
-              <Route exact path="/sign-in" element={<Login onLogin={handleLogin}/>}></Route>
-              <Route exact path="/sign-up" element={<Register onRegister={handleLogin}/>}></Route>
-              <Route 
-                path="/mesto" 
+              <Route
+                exact
+                path="/sign-in"
+                element={<Login onLogin={handleLogin} />}
+              ></Route>
+              <Route
+                exact
+                path="/sign-up"
+                element={<Register onRegister={handleLogin} />}
+              ></Route>
+              <Route
+                path="/mesto"
                 element={
-                <ProtectedRouteElement 
-                  element={Main}
-                  loggedIn={loggedIn}
-                  onEditProfile={handleEditProfileClick}
-                  onUpdateAvatar={handleUpdateAvatarClick}
-                  onAddCard={handleAddCardClick}
-                  onCardClick={handleCardClick}
-                  onCardLike={handleCardLike}
-                  onCardDelete={handleCardDelete}
-                  cards={cards}
-                />}
+                  <ProtectedRouteElement
+                    element={Main}
+                    loggedIn={loggedIn}
+                    onEditProfile={handleEditProfileClick}
+                    onUpdateAvatar={handleUpdateAvatarClick}
+                    onAddCard={handleAddCardClick}
+                    onCardClick={handleCardClick}
+                    onCardLike={handleCardLike}
+                    onCardDelete={handleCardDelete}
+                    cards={cards}
+                  />
+                }
               />
             </Routes>
           </main>
@@ -222,26 +237,30 @@ function App() {
             isOpen={isEditProfilePopupOpen}
             onUpdateUser={handleUpdateUser}
             onClose={closeAllPopups}
-          ></EditProfilePopup>
+            isLoading={isLoading}
+          />
           {/* popup: confirmation */}
           <PopupWithForm
             name="confirmation"
             title="Вы уверены?"
             buttonTitle="Да"
             onClose={closeAllPopups}
-          ></PopupWithForm>
+            isLoading={isLoading}
+          />
           {/* popup: update avatar */}
           <EditAvatarPopup
             isOpen={isUpdateAvatarPopupOpen}
             onClose={closeAllPopups}
             onUpdateAvatar={handleUpdateAvatar}
-          ></EditAvatarPopup>
+            isLoading={isLoading}
+          />
           {/* popup: add new card */}
           <AddPlacePopup
             isOpen={isAddCardPopupOpen}
             onAddPlace={handleAddPlaceSubmit}
             onClose={closeAllPopups}
-          ></AddPlacePopup>
+            isLoading={isLoading}
+          />
           {/* popup: open card */}
           <ImagePopup card={selectedCard} onClose={closeAllPopups} />
         </div>

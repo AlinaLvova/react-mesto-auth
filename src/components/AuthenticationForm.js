@@ -46,33 +46,15 @@ function AuthenticationForm(props) {
   }
 
 
-  function handleError(error) {
-    if (error.message){
-      setErrorInfoTooltipTitle(error.message);
-    }else if (error) {
-      setErrorInfoTooltipTitle(error.error);
-    }else{
-      setErrorInfoTooltipTitle("");
-    }
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
+    setErrorInfoTooltipTitle('');
     const title = props.isLogin ? 'Вы успешно вошли в систему!' : 'Вы успешно зарегистрировались!';
     try {
-      const response = props.isLogin
+      const data = props.isLogin
         ? await auth.signin( formValue.email, formValue.password)
         : await auth.signup( formValue.email, formValue.password);
   
-      if (!response.ok) {
-        const error = await response.json();
-        handleError(error);
-        setIsInfoTooltipOpen(true);
-        throw new Error(error.message);
-      }
-  
-      const data = await response.json();
-
       if (props.isLogin) {
         localStorage.setItem('token', data.token);
       }
@@ -86,6 +68,8 @@ function AuthenticationForm(props) {
         state: { isOpenInfoPopup: true , title: title},
       });
     } catch (error) {
+      setErrorInfoTooltipTitle(error.message);
+      setIsInfoTooltipOpen(true);
       console.log('Error:', error);
     }
   }
@@ -96,7 +80,7 @@ function AuthenticationForm(props) {
         <h3 className="auth__title">
           {props.isLogin ? "Вход" : "Регистрация"}
         </h3>
-        <form className="auth__form">
+        <form className="auth__form" onSubmit={handleSubmit}>
           <div className="auth__form-input-group">
             <input
               id="email"
@@ -123,7 +107,6 @@ function AuthenticationForm(props) {
           <button
             className={`auth__button ${!buttonDisabled && "link"}`}
             type="submit"
-            onClick={handleSubmit}
             disabled={buttonDisabled}
           >
             {props.isLogin ? "Войти" : "Зарегистрироваться"}
